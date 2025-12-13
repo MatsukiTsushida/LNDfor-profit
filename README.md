@@ -25,13 +25,22 @@ nano ~/.bitcoin/bitcoin.conf
 Put this into the file and press ctrl+O:
 
 ```
-#Enable testnet modestnet=1
+#Enable testnet
+testnet=1
 
-d
-#if you wnana just into mainnet immidietlya#mainnet=1emon=1
+#if you wnana just into mainnet immidietlya
+#mainnet=1
+daemon=1
 
-# R# RPC settings for API accesse[test]crpcuser = createuserhere(laterusedinlnd)crpcpassword = createpasswordhere(laterusedinlnd)callowip=127.0.0.1
+#RPC settings for API access
+[test]
+rpcuser = createuserhere(laterusedinlnd)
+rpcpassword = createpasswordhere(laterusedinlnd)
+rpcallowip=127.0.0.1
+
+# HAS TO MATCH THE ONE IN THE LND CONFIG
 rpcport=18332
+
 deprecatedrpc=warnings
 rpcworkqueue=100
 # Connection settings
@@ -42,11 +51,9 @@ zmqpubrawblock=tcp://127.0.0.1:28332
 # Notifies of raw, new transactions on port 28333
 zmqpubrawtx=tcp://127.0.0.1:28333
 
-# L# Logging usefull for debuggingbug=1
+# Logging usefull for debugging
+debug=1
 printtoconsole=1
-
-
-
 ```
 # Start the Bitcoin Core 
 
@@ -57,13 +64,14 @@ Now you will need to wait until the core syncs up with the the bitcoin testnet, 
 In the mean time you can set up the lnd node (not be able to do anything with it due to the unsynced state) or set up a bitcoin wallet either in the UI or with this command:
 ```
 # Create new wallet
-bitcoin-cli -testnet createwallet "testwallet"
+bitcoin-cli -testnet createwallet "YOUR_WALLET_NAME"
 
 # Create encrypted wallet (recommended)
-bitcoin-cli -testnet createwallet "testwallet" false false "your_passphrase"
+bitcoin-cli -testnet createwallet "YOUR_WALLET_NAME" false false "YOUR_PASSPHRASE"
 
 ```
-### Part 2: setting up LND node
+# Part 2: setting up LND node
+
 ```
 # Download LND binary
 wget https://github.com/lightningnetwork/lnd/releases/download/v0.17.4-beta/lnd-linux-amd64-v0.17.4-beta.tar.gz
@@ -79,3 +87,82 @@ sudo cp lnd-linux-amd64-v0.17.4-beta/lncli /usr/local/bin/
 lnd --version
 
 ```
+Now do the same thing as with bitcoind, set up a config file: 
+
+```
+mkdir ~/.lnd/lnd.conf
+nano ~/.lnd/lnd.conf
+```
+Copy this config, edit it for yourself and save with CTRL + O:
+
+```
+[Application Options]
+debuglevel=info
+maxpendingchannels=5
+alias=yournodesalias
+color=#3399ff
+
+[Bitcoin]
+bitcoin.active=1
+bitcoin.testnet=1
+bitcoin.node=bitcoind
+
+[Bitcoind]
+# you can set up any port you want for the rpchost, but it has to match the on ein bitcoind
+bitcoind.rpchost=localhost:18332
+
+bitcoind.rpcuser = youruserthatyousetup
+bitcoind.rpcpass = yourpasswordthatyousetup
+bitcoind.zmqpubrawblock=tcp://127.0.0.1:28332
+bitcoind.zmqpubrawtx=tcp://127.0.0.1:28333
+
+```
+Now start up your lightning node fund it (as long as your bitcoind is synced with testnet (mainnet)):
+
+```
+lnd
+```
+Open a separate terminal window and create the lightning node wallet:
+!VERY IMPORTANT WARNING BEFORE CONTINUING, IF YOU WORK ON TESTNET, U MIGHT HAVE TO USE THE ``` lncli --network=testnet ``` FOR EVERY COMMAND!
+
+```
+lncli create
+```
+Go through the process of setting it up and:
+
+```
+lncli unlock
+```
+and then get the address you will send the SAT onto:
+
+```
+# Get new Bitcoin address
+lncli newaddress p2wkh
+```
+Now obviously you have two options either sendind your own bitcoin with mainnet or getting a faucet you can get testnet SAT from.
+
+# Faucet for testnet
+I mostly use https://coinfaucet.eu/en/btc-testnet/ its the most rilable source for testnet, however there are many you can find on reddit (surprisingly).
+
+# Part 3: Open Connection
+When you have LND set up and your balance isnt 0 (At least 100000 SAT) you can set up a connection with a node and set up an open channel.
+
+## First you have to find a node
+
+For mainnet, I don't usually know any mainnet node websites where you can get them. With testnet https://1ml.com/testnet/ this websites provides you with many different options.
+
+## Get the public key
+
+The website I provided has a public key for every node that you can find on the top of the page. Now set up a connection with them:
+
+```
+lncli connect PUBLIC_KEY
+```
+And then you can open the channel with them (usually you have to put this command immidietly after connecting to the node):
+```
+lncli --network=testnet openchannel \
+    --node_key=026c0f266268c1edc4e1f7e17ba6aa18979fee47f059e46a40cafbbcc56ab3df57 \
+    --local_amt=50000 \
+    --push_amt=10000
+```
+50000 SAT is the amount of SAT you want the connection to work with (the transaction in the connection does not go other 50000) and 10000 is the SAT that is basically taken of you as 
