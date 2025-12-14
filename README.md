@@ -170,7 +170,7 @@ lncli --network=testnet openchannel \
 
 # Part 4: The Good, the bad and the scammy
 
-## Congratualtions you have now successfully set up your lightning node on eitehr testnet or mainnet, no the next big part of lightning is the security of it.
+Congratualtions you have now successfully set up your lightning node on either testnet or mainnet, no the next big part of lightning is the security of it.
 
 ## Security
 ### KEY PHRASE
