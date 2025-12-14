@@ -125,6 +125,7 @@ lnd
 Open a separate terminal window and create the lightning node wallet:
 !VERY IMPORTANT WARNING BEFORE CONTINUING, IF YOU WORK ON TESTNET, U MIGHT HAVE TO USE THE ``` lncli --network=testnet ``` FOR EVERY COMMAND!
 
+### DISCLAIMER IN THIS STEP IT IS ESSENMTIAL THAT YOU SAVE THE KEY PHRASES TO RESTORE YOUYR WALLET IF EITHER HARDWARE OR SOFTWARE FAILS
 ```
 lncli create
 ```
@@ -165,4 +166,37 @@ lncli --network=testnet openchannel \
     --local_amt=50000 \
     --push_amt=10000
 ```
-50000 SAT is the amount of SAT you want the connection to work with (the transaction in the connection does not go other 50000) and 10000 is the SAT that is basically taken of you as 
+50000 SAT is the amount of SAT you want the connection to work with (the transaction in the connection does not go other 50000) and 10000 is the SAT that is basically taken of you as a collateral in case you decide to drop out of the connection (your machine turns off etc etc)
+
+# Part 4: The Good, the bad and the scammy
+
+## Congratualtions you have now successfully set up your lightning node on eitehr testnet or mainnet, no the next big part of lightning is the security of it.
+
+## Security
+### KEY PHRASE
+As stated in previous steps it is ESSENTIAL that you save your key phrase when creating the wallet, beacuse otherwise you might lose your SAT. The SAT is thankfully sealed on-chain, but that doesn't mean you can access it. 
+
+### Static channel backup 
+In case of a hardware failure another important issue that might take place is the permanant liquidity loss in the channels you were connected to (one's that still have your funds, fees that you have collected and collateral, which the network might decide you have to pay, beacause of a unactivity for example). 
+
+The channel backups are located at ```~/.lnd/data/chain/bitcoin/channel.backup```, preferably copied and stored somewhere on another device for security.
+
+After creating a new node and wallet to finally close the channel and recieve your funds back you need to use:
+```
+# This command is often run during the wallet unlock sequence or separately:
+lncli restorechanbackup --multi_chan_backup [PATH_TO_BACKUP]
+```
+
+The biggest limitation of this however is that all peers on the network must be cooperative and let you take the funds back when clsoing the channel.
+
+## Scamming 
+### Watchtowers
+
+An important topic to look at in this case is also the watchtowers. They let you observe the other nodes connected to the channel for potential channel breaches (publishing previous, expired or revoked commitment that may or may not benefit them) 
+
+To run an LND watch tower all you have to do is put an extra ```watchtower.active=1``` above all tags.
+To look at the tower info type:
+```
+lncli tower info
+```
+
