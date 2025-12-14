@@ -28,7 +28,7 @@ Put this into the file and press ctrl+O:
 #Enable testnet
 testnet=1
 
-#if you wnana just into mainnet immidietlya
+#if you wanna enable mainnet
 #mainnet=1
 daemon=1
 
