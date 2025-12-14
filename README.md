@@ -168,7 +168,24 @@ lncli --network=testnet openchannel \
 ```
 50000 SAT is the amount of SAT you want the connection to work with (the transaction in the connection does not go other 50000) and 10000 is the SAT that is basically taken of you as a collateral in case you decide to drop out of the connection (your machine turns off etc etc)
 
-# Part 4: The Good, the bad and the scammy
+# Part 4: The fees
+
+Now comes the most fun part setting up the fees and for other nodes to channel payments through your node.
+
+First however open the channel and wait until it shoes in ```lncli listchannels```
+Then this command sets up your fee policy:
+```
+# Example: Setting 1 sat base fee (1000 msat) and 75 PPM proportional fee
+lncli updatechanpolicy --chan_point=TXID:OUTPUT_INDEX --base_fee_msat=1000 --fee_rate=75 --time_lock_delta=40
+```
+To get the chan_point you need to find it by ```lncli listchannels```
+
+<img width="765" height="79" alt="image" src="https://github.com/user-attachments/assets/55967b47-32f9-4a12-abd9-0e371af62516" />
+
+Fee_rate flag - it is measured in PPM or Part Per Million satoshis and is used in the formula above to calculate the fee for the liquidity that you have provided with the user
+base_fee_msat flag - that is the basic fee that is taken at every transaction for providing the service, usually pretty small (most of the money goes from the fee_rate)
+
+# Part 5: The Good, the bad and the scammy
 
 Congratualtions you have now successfully set up your lightning node on either testnet or mainnet, no the next big part of lightning is the security of it.
 
