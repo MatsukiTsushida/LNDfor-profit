@@ -94,7 +94,7 @@ lnd --version
 Now do the same thing as with bitcoind, set up a config file: 
 
 ```
-mkdir ~/.lnd/lnd.conf
+mkdir ~/.lnd/
 nano ~/.lnd/lnd.conf
 ```
 Copy this config, edit it for yourself and save with CTRL + O:
