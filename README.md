@@ -11,10 +11,11 @@
 ## This guide thoroughly explains how to set up an LND node based on bitcoind (with links to testnet faucets if needed) 
 
 # Part 1: Install Bitcoind
+I chose versio 28.0 beacuse thats the newest one for me, but you might need to change it
 ```
-wgt https://bitcoincore.org/bin/bitcoin-core-xx.x/bitcoin-xx.x-x86_64-linux-gnu.tar.gz
-tar -xzf bitcoin-xx.x-x86_64-linux-gnu.tar.gz
-sudo cp bitcoin-xx.x/bin/* /usr/local/bin/
+wgt https://bitcoincore.org/bin/bitcoin-core-28.0/bitcoin-xx.x-x86_64-linux-gnu.tar.gz
+tar -xzf bitcoin-28.0-x86_64-linux-gnu.tar.gz
+sudo cp bitcoin-28.0/bin/* /usr/local/bin/
 ```
 # Essential testnet config
 Create a config file for your bitcoind
@@ -40,6 +41,9 @@ rpcallowip=127.0.0.1
 
 # HAS TO MATCH THE ONE IN THE LND CONFIG
 rpcport=18332
+
+# mainnet rpc
+# rpcport=8332
 
 deprecatedrpc=warnings
 rpcworkqueue=100
