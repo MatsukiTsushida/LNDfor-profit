@@ -20,7 +20,7 @@ sudo cp bitcoin-28.0/bin/* /usr/local/bin/
 # Essential testnet config
 Create a config file for your bitcoind
 ```
-mkdir ~/.bitcoin/bitcoin.conf
+mkdir ~/.bitcoin/
 nano ~/.bitcoin/bitcoin.conf
 ```
 Put this into the file and press ctrl+O:
